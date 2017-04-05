@@ -1,0 +1,5 @@
+1,2,1,4
+1,Spirit,Tree Spirit,0,-1,0,0,200,0.5,-1,1
+1,Spirit,Grass Spirit,-1,-1,-1,-1,-1,-1,-1,10
+1,Ghost,Ice Ghost,15,0.2,1,0.4,20,0.2,1,10,1
+1,Ghost,Snow Ghost,8,0.4,1,0.7,15,0.2,1,6,0

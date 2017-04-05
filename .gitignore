@@ -1,0 +1,14 @@
+c generated
+*.DS_Store
+
+## Unity generated
+Library/
+Temp/
+ProjectSettings/
+Assembly-CSharp.csproj
+
+## Build
+Build/
+
+## other
+Other

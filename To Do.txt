@@ -1,0 +1,25 @@
+To Do:
+- move the moon throughout the game to indicate day changes
+- more playtest
+
+Done:
+- agent system
+- rolling system
+- better way to design UI
+- rolling UI - roll, select and put agents in game (event trigger)
+- test in webgl
+- EXP
+- game flow (day)
+- day UI
+- selection UI - select agents before each day
+- level up UI - use EXP to upgrade
+- more agents
+- grow of tree - sense of connection
+- playtest
+
+Playtest:
+4.5 Colin:
+1. I’m a little confused by the system. Are certain enemies harder to defeat than others?
+2. How do you get past the upgrade selection? It seems to be stuck there so I can’t get to day 2.
+3. Is there a penalty system for using too many of your characters?
+3. I think it would be nice to have an intro screen that explains the game more, like with some of your previous games.
