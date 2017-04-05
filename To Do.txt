@@ -3,19 +3,21 @@ To Do:
 - more playtest
 
 Done:
-- agent system
-- rolling system
-- better way to design UI
-- rolling UI - roll, select and put agents in game (event trigger)
-- test in webgl
+- added the agent system
+- added a rolling system
+- redesigned the UI
+- added the rolling UI - roll, select and put agents in game (event trigger)
+- tested in webgl
 - EXP
-- game flow (day)
-- day UI
-- selection UI - select agents before each day
-- level up UI - use EXP to upgrade
-- more agents
-- grow of tree - sense of connection
-- playtest
+- implemented the game flow/circle (day)
+- added the game UI and selection UI - select agents before each day
+- added the Upgrade UI - use EXP to upgrade
+- added more agents
+- added the growth of tree - build a sense of connection
+- finished the first playtest with Colin
+- fixed the UI-out-of-screen problem
+- recalculated the balance
+- added tutorials
 
 Playtest:
 4.5 Colin:

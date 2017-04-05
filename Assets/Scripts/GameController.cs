@@ -11,8 +11,16 @@ public class States {
 	public static int UPGRADE = 40;
 	public static int SETUP = 50;
 	public static int DAY = 60;
-	public static int FINISH_DAY = 70;
-	public static int RESTART_DAY = 80;
+	public static int DAY_TUT0 = 70;
+	public static int DAY_TUT1 = 71;
+	public static int DAY_TUT2 = 72;
+	public static int DAY_TUT3 = 73;
+	public static int DAY_TUT4 = 74;
+	public static int DAY_TUT5 = 75;
+	public static int DAY_TUT6 = 76;
+	public static int DAY_TUT7 = 77;
+	public static int FINISH_DAY = 90;
+	public static int RESTART_DAY = 100;
 }
 
 public class GameController : MonoBehaviour {
@@ -53,6 +61,23 @@ public class GameController : MonoBehaviour {
 	private int numOfSpirits;
 	private int numOfGhosts;
 	private int minCost = 0;
+
+	// tutorials
+	public GameObject Tutorial0;
+	public GameObject Tutorial1;
+	public GameObject Tutorial2;
+	public GameObject Tutorial3;
+	public GameObject Tutorial4;
+	public GameObject Tutorial5;
+	public GameObject Tutorial6;
+	public GameObject Tutorial7;
+	private bool check1 = false;
+	private bool check2 = false;
+	private bool check3 = false;
+	private bool check4 = false;
+	private bool check5 = false;
+	private bool check6 = false;
+	private bool continueGame = false;
 
 	// roll
 	public List<GameObject> allRolls = new List<GameObject> ();
@@ -314,7 +339,7 @@ public class GameController : MonoBehaviour {
 				ghost.SetActive (true);
 				ghost.GetComponent <Agent> ().game = this;
 				ghost.GetComponent <Agent> ().Move ();
-				ghostSpawnInterval = Random.Range (0.5f, 1f);
+				ghostSpawnInterval = Random.Range (0.3f, 3f);
 			}
 		}
 
@@ -386,6 +411,82 @@ public class GameController : MonoBehaviour {
 				index ++;
 			}
 			rollLocked = false;
+		}
+
+		// tutorials - check points
+		// when the first ghost comes, display tutorial 0
+		if (!check1)
+		{
+			GameObject firstGhost = GameObject.FindWithTag ("Ghost");
+			if (firstGhost != null)
+			{
+				if (firstGhost.transform.position.x > -4)
+				{
+					check1 = true;
+					next_state = States.DAY_TUT0;
+				}
+			}
+		}
+
+		if (!check2)
+		{
+			if (exp > 0)
+			{
+				check2 = true;
+				next_state = States.DAY_TUT3;
+			}
+		}
+
+		if (!check3)
+		{
+			GameObject firstSpirit = GameObject.Find ("Stone Spirit");
+			if (firstSpirit != null)
+			{
+				if (firstSpirit.transform.position.x < 4)
+				{
+					check3 = true;
+					next_state = States.DAY_TUT4;
+				}
+			}
+		}
+
+		if (!check4)
+		{
+			GameObject firstSpirit = GameObject.Find ("Durio Spirit");
+			if (firstSpirit != null)
+			{
+				if (firstSpirit.transform.position.x < 4)
+				{
+					check4 = true;
+					next_state = States.DAY_TUT5;
+				}
+			}
+		}
+
+		if (!check5)
+		{
+			GameObject firstSpirit = GameObject.Find ("Long Grass Spirit");
+			if (firstSpirit != null)
+			{
+				if (firstSpirit.transform.position.x < 4)
+				{
+					check5 = true;
+					next_state = States.DAY_TUT6;
+				}
+			}
+		}
+
+		if (!check6)
+		{
+			GameObject firstSpirit = GameObject.Find ("Butterfly Spirit");
+			if (firstSpirit != null)
+			{
+				if (firstSpirit.transform.position.x < 4)
+				{
+					check6 = true;
+					next_state = States.DAY_TUT7;
+				}
+			}
 		}
 	}
 
@@ -528,6 +629,136 @@ public class GameController : MonoBehaviour {
 			Day ();
 		}
 
+		else if (state == States.DAY_TUT0)
+		{
+			if (last_state != state)
+			{
+				PauseGame ();
+				Tutorial0.SetActive (true);
+			}
+
+			if (continueGame)
+			{
+				ContinueGame ();
+				Tutorial0.SetActive (false);
+				StartCoroutine (StartTutorial (1, 1));
+				next_state = States.DAY;
+			}
+		}
+
+		else if (state == States.DAY_TUT1)
+		{
+			if (last_state != state)
+			{
+				PauseGame ();
+				Tutorial1.SetActive (true);
+			}
+
+			if (continueGame)
+			{
+				ContinueGame ();
+				Tutorial1.SetActive (false);
+				StartCoroutine (StartTutorial (2, 1));
+				next_state = States.DAY;
+			}
+		}
+
+		else if (state == States.DAY_TUT2)
+		{
+			if (last_state != state)
+			{
+				PauseGame ();
+				Tutorial2.SetActive (true);
+			}
+
+			if (continueGame)
+			{
+				ContinueGame ();
+				Tutorial2.SetActive (false);
+				next_state = States.DAY;
+			}
+		}
+
+		else if (state == States.DAY_TUT3)
+		{
+			if (last_state != state)
+			{
+				PauseGame ();
+				Tutorial3.SetActive (true);
+			}
+
+			if (continueGame)
+			{
+				ContinueGame ();
+				Tutorial3.SetActive (false);
+				next_state = States.DAY;
+			}
+		}
+
+		else if (state == States.DAY_TUT4)
+		{
+			if (last_state != state)
+			{
+				PauseGame ();
+				Tutorial4.SetActive (true);
+			}
+
+			if (continueGame)
+			{
+				ContinueGame ();
+				Tutorial4.SetActive (false);
+				next_state = States.DAY;
+			}
+		}
+
+		else if (state == States.DAY_TUT5)
+		{
+			if (last_state != state)
+			{
+				PauseGame ();
+				Tutorial5.SetActive (true);
+			}
+
+			if (continueGame)
+			{
+				ContinueGame ();
+				Tutorial5.SetActive (false);
+				next_state = States.DAY;
+			}
+		}
+
+		else if (state == States.DAY_TUT6)
+		{
+			if (last_state != state)
+			{
+				PauseGame ();
+				Tutorial6.SetActive (true);
+			}
+
+			if (continueGame)
+			{
+				ContinueGame ();
+				Tutorial6.SetActive (false);
+				next_state = States.DAY;
+			}
+		}
+
+		else if (state == States.DAY_TUT7)
+		{
+			if (last_state != state)
+			{
+				PauseGame ();
+				Tutorial7.SetActive (true);
+			}
+
+			if (continueGame)
+			{
+				ContinueGame ();
+				Tutorial7.SetActive (false);
+				next_state = States.DAY;
+			}
+		}
+
 		else if (state == States.FINISH_DAY)
 		{
 			next_state = States.INIT_DAY;
@@ -543,5 +774,40 @@ public class GameController : MonoBehaviour {
 	{
 		last_state = state;
 		state = next_state;
+	}
+
+	private void PauseGame ()
+    {
+        Time.timeScale = 0;
+		continueGame = false;
+		StartCoroutine (StartContinueGame (2));
+	}
+
+	private void ContinueGame ()
+    {
+        Time.timeScale = 1;
+    }
+
+	IEnumerator StartContinueGame (float delay)
+	{
+		float pauseEndTime = Time.realtimeSinceStartup + delay;
+	    while (Time.realtimeSinceStartup < pauseEndTime)
+	    {
+	        yield return 0;
+	    }
+		continueGame = true;
+	}
+
+	IEnumerator StartTutorial (int id, float delay)
+	{
+		yield return new WaitForSeconds (delay);
+		if (id == 1)
+		{
+			next_state = States.DAY_TUT1;
+		}
+		else if (id == 2)
+		{
+			next_state = States.DAY_TUT2;
+		}
 	}
 }

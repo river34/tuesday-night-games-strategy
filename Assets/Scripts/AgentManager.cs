@@ -243,6 +243,11 @@ public class AgentMeta {
 			nextAgentMeta.LevelUp (ref nextAgentMeta);
 		}
 
+		if (nextAgentMeta.tag == "Ghost")
+		{
+			nextAgentMeta.rate ++;
+		}
+
 		return nextAgentMeta;
 	}
 }

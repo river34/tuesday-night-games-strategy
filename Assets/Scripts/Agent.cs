@@ -34,28 +34,27 @@ public class Agent : MonoBehaviour {
 	private float pace;
 	private int n;
 
-	public AgentManager agentManager;
+	// properties
 	private Animator animator;
-	public GameController game;
+	private Renderer renderer;
 
-	/*
-	public Agent (string _name, float _dps, float _aoe, float _speed, float _health, float _defense, float _refresh, int _cost, int _level)
-	{
-		name = _name;
-		dps = _dps;
-		aoe = _aoe;
-		speed = _speed;
-		health = _health;
-		defense = _defense;
-		refresh = _refresh;
-		cost = _cost;
-		level = _level;
-	}
-	*/
+	// game
+	public AgentManager agentManager;
+	public GameController game;
 
 	void Awake ()
 	{
 		animator = GetComponent <Animator> ();
+		if (animator == null)
+		{
+			animator = transform.Find ("Model").gameObject.GetComponent <Animator> ();
+		}
+
+		renderer = gameObject.GetComponent <Renderer> ();
+		if (renderer == null)
+		{
+			renderer = transform.Find ("Model").gameObject.GetComponent <Renderer> ();
+		}
 
 		gameObject.tag = tag;
 		gameObject.name = name;
@@ -205,7 +204,7 @@ public class Agent : MonoBehaviour {
 			gameObject.tag = "Dead";
 			NotATarget ();
 			NotAPredator ();
-			gameObject.GetComponent <Renderer> ().enabled = false;
+			renderer.enabled = false;
 			gameObject.GetComponent <Collider2D> ().enabled = false;
 			agentManager.Recycle (gameObject);
 			enabled = false;
@@ -253,8 +252,7 @@ public class Agent : MonoBehaviour {
 		GameObject[] gameObjects = GameObject.FindGameObjectsWithTag (tag);
 		if (gameObjects.Length == 0)
 		{
-			if (GameObject.Find ("Exit") != null)
-				return;
+			if (GameObject.Find ("Exit") != null) return;
 			GameObject exit = new GameObject ("Exit");
 			if (tag == "Ghost") exit.tag = "SpiritExit";
 			if (tag == "Spirit" || tag == "Tree") exit.tag = "GhostExit";
@@ -281,6 +279,10 @@ public class Agent : MonoBehaviour {
 			if (targets.Count < num)
 			{
 				Agent target = other.gameObject.GetComponent <Agent> ();
+				if (target.name == "Butterfly Spirit" && name != "Snow Man Ghost")
+				{
+					return;
+				}
 				if (target != null && enabled)
 				{
 					StartCoroutine (AttemptAddTarget (target));
