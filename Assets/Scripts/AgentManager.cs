@@ -223,6 +223,35 @@ public class AgentMeta {
 		ExportToPrefab ();
 	}
 
+	public AgentMeta NextDay (ref Dictionary<string, GameObject> treeBook)
+	{
+		AgentMeta nextAgentMeta = new AgentMeta ();
+		nextAgentMeta.tag = tag;
+		nextAgentMeta.name = name;
+		nextAgentMeta.damage = damage;
+		nextAgentMeta.damageTime = damageTime;
+		nextAgentMeta.num = num;
+		nextAgentMeta.speed = speed;
+		nextAgentMeta.health = health;
+		nextAgentMeta.defense = defense;
+		nextAgentMeta.level = level;
+		nextAgentMeta.rate = rate;
+		nextAgentMeta.gameObject = gameObject;
+
+		if (nextAgentMeta.tag == "Tree")
+		{
+			if (nextAgentMeta.level < 6 && treeBook != null)
+			{
+				if (treeBook.ContainsKey ("Tree Spirit " + (nextAgentMeta.level+1)))
+				{
+					treeBook ["Tree Spirit " + (nextAgentMeta.level+1)].GetComponent <Agent> ().ExportToMeta (ref nextAgentMeta);
+				}
+			}
+		}
+
+		return nextAgentMeta;
+	}
+
 	public AgentMeta NextDay ()
 	{
 		AgentMeta nextAgentMeta = new AgentMeta ();
@@ -238,13 +267,9 @@ public class AgentMeta {
 		nextAgentMeta.rate = rate;
 		nextAgentMeta.gameObject = gameObject;
 
-		if (nextAgentMeta.tag == "Ghost" || nextAgentMeta.tag == "Tree")
-		{
-			nextAgentMeta.LevelUp (ref nextAgentMeta);
-		}
-
 		if (nextAgentMeta.tag == "Ghost")
 		{
+			nextAgentMeta.LevelUp (ref nextAgentMeta);
 			nextAgentMeta.rate ++;
 		}
 
@@ -254,7 +279,7 @@ public class AgentMeta {
 
 public class DayMeta {
 	public int day;
-	public AgentMeta treeMeta;
+	public List<AgentMeta> treeMeta = new List<AgentMeta> ();
 	public List<AgentMeta> spiritMeta = new List<AgentMeta> ();
 	public List<AgentMeta> ghostMeta = new List<AgentMeta> ();
 	public int numOfSpirits;
@@ -265,7 +290,7 @@ public class DayMeta {
 
 	}
 
-	public DayMeta (int _day, AgentMeta _treeMeta, List<AgentMeta> _spiritMeta, List<AgentMeta> _ghostMeta, int _numOfSpirits, int _numOfGhosts)
+	public DayMeta (int _day, List<AgentMeta> _treeMeta, List<AgentMeta> _spiritMeta, List<AgentMeta> _ghostMeta, int _numOfSpirits, int _numOfGhosts)
 	{
 		day = _day;
 		treeMeta = _treeMeta;
@@ -283,9 +308,8 @@ public class DayMeta {
 		{
 			if (agentMeta.name == "Tree Spirit")
 			{
-				treeMeta = agentMeta;
-				spiritMeta.Remove (treeMeta);
-				break;
+				treeMeta.Add (agentMeta);
+				spiritMeta.Remove (agentMeta);
 			}
 		}
 		ghostMeta = _ghostMeta;
@@ -293,17 +317,39 @@ public class DayMeta {
 		numOfGhosts = _numOfGhosts;
 	}
 
-	public DayMeta NextDay ()
+	public DayMeta NextDay (ref Dictionary<string, GameObject> treeBook)
 	{
 		DayMeta nextDayMeta = new DayMeta ();
 		nextDayMeta.day = day + 1;
+		// tree
 		nextDayMeta.treeMeta = treeMeta;
+		bool levelUpTree = false;
+		for (int i = 0; i < nextDayMeta.treeMeta.Count; i++)
+		{
+			if (nextDayMeta.treeMeta [i].level < 6)
+			{
+				nextDayMeta.treeMeta [i] = nextDayMeta.treeMeta [i].NextDay (ref treeBook);
+				levelUpTree = true;
+				break;
+			}
+		}
+		if (!levelUpTree)
+		{
+			// add new tree
+			AgentMeta meta = new AgentMeta ();
+			if (treeBook.ContainsKey ("Tree Spirit 1"))
+			{
+				treeBook ["Tree Spirit 1"].GetComponent <Agent> ().ExportToMeta (ref meta);
+				nextDayMeta.treeMeta.Add (meta);
+			}
+		}
+		// spirit
 		nextDayMeta.spiritMeta = spiritMeta;
 		for (int i = 0; i < nextDayMeta.spiritMeta.Count; i++)
 		{
 			nextDayMeta.spiritMeta [i] = nextDayMeta.spiritMeta [i].NextDay ();
 		}
-		nextDayMeta.treeMeta = treeMeta.NextDay ();
+		// ghost
 		nextDayMeta.ghostMeta = ghostMeta;
 		for (int i = 0; i < nextDayMeta.ghostMeta.Count; i++)
 		{
@@ -420,7 +466,8 @@ public class AgentManager : MonoBehaviour {
 		// dictionary
 		dayMeta.Clear ();
 
-		AgentMeta todaysTree = null;
+		// AgentMeta todaysTree = null;
+		List<AgentMeta> todaysTrees = new List<AgentMeta> ();
 		List<AgentMeta> todaysSpirits = new List<AgentMeta> ();
 		List<AgentMeta> todaysGhosts = new List<AgentMeta> ();
 		DayMeta todaysMeta;
@@ -454,7 +501,8 @@ public class AgentManager : MonoBehaviour {
 						ghostNum = int.Parse (entries [2]);
 						lineNum = int.Parse (entries [3]);
 						lineIndex = 0;
-						todaysTree = null;
+						// todaysTree = null;
+						todaysTrees = new List<AgentMeta> ();
 						todaysSpirits = new List<AgentMeta> ();
 						todaysGhosts = new List<AgentMeta> ();
 					}
@@ -470,7 +518,7 @@ public class AgentManager : MonoBehaviour {
 								agentMeta = new AgentMeta (entries [1], entries [2], entries [3], entries [4], entries [5], entries [6], entries [7], entries [8], entries [9], entries [10], entries [11], treeBook [entries [2]]);
 								agentMeta.ExportToPrefab ();
 								agentMeta.ExportFromPrefab ();
-								todaysTree = agentMeta;
+								todaysTrees.Add (agentMeta);
 							}
 							if (spiritBook.ContainsKey (entries [2]))
 							{
@@ -497,7 +545,8 @@ public class AgentManager : MonoBehaviour {
 
 					if (lineIndex == lineNum)
 					{
-						todaysMeta = new DayMeta (day, todaysTree, todaysSpirits, todaysGhosts, spiritNum, ghostNum);
+						lineIndex ++;
+						todaysMeta = new DayMeta (day, todaysTrees, todaysSpirits, todaysGhosts, spiritNum, ghostNum);
 						dayMeta.Add (todaysMeta);
 					}
 				}
@@ -518,7 +567,7 @@ public class AgentManager : MonoBehaviour {
 			while (dayMeta.Count < day)
 			{
 				DayMeta lastdayMeta = dayMeta [dayMeta.Count-1];
-				DayMeta todaysMeta = lastdayMeta.NextDay ();
+				DayMeta todaysMeta = lastdayMeta.NextDay (ref treeBook);
 				dayMeta.Add (todaysMeta);
 			}
 		}
@@ -543,11 +592,40 @@ public class AgentManager : MonoBehaviour {
 		return dayMeta [day-1].ghostMeta;
 	}
 
-	public GameObject CreateTree (AgentMeta agentMeta)
+	public List<GameObject> CreateTrees (List<AgentMeta> agentMeta)
 	{
-		GameObject gameObject = Instantiate (agentMeta.gameObject, agentHolder);
-		agentMeta.CopyToAgent (ref gameObject);
-		return gameObject;
+		if (agentMeta.Count < 0)
+		{
+			return null;
+		}
+
+		List<GameObject> trees = new List<GameObject> ();
+
+		int index = 0;
+		foreach (AgentMeta meta in agentMeta)
+		{
+			GameObject gameObject = Instantiate (meta.gameObject, agentHolder);
+
+			if (index%2 == 0)
+			{
+				gameObject.transform.localPosition += Vector3.left * Random.Range (0.3f, 0.6f) * Mathf.Floor ((index+1)/2);
+			}
+			else
+			{
+				gameObject.transform.localPosition += Vector3.right * Random.Range (0.3f, 0.6f) * Mathf.Floor ((index+1)/2);
+			}
+			gameObject.transform.localScale *= Mathf.Pow (0.9f, Mathf.Floor ((index+1)/2));
+			if (gameObject.transform.localScale.x <= 0.5f)
+			{
+				gameObject.transform.localScale = Vector3.one * 0.5f;
+			}
+
+			meta.CopyToAgent (ref gameObject);
+			trees.Add (gameObject);
+			index ++;
+		}
+
+		return trees;
 	}
 
 	public List<GameObject> CreateRoll (int num, List<AgentMeta> agentMeta)

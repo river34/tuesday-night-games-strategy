@@ -33,12 +33,12 @@ public class GameController : MonoBehaviour {
 	public AgentManager agentManager;
 	public List<GameObject> spirits;
 	public List<GameObject> ghosts;
-	public GameObject tree;
+	public List<GameObject> trees;
 	public List<GameObject> roll = new List<GameObject> ();
 	public DayMeta dayMeta;
 	public List<AgentMeta> todaysSpirits;
 	public List<AgentMeta> todaysGhosts;
-	public AgentMeta todaysTree;
+	public List<AgentMeta> todaysTrees;
 	public int state;
 	public int last_state;
 	public int next_state;
@@ -58,9 +58,12 @@ public class GameController : MonoBehaviour {
 	public GameObject ExpUI;
 	private int rollNum;
 	private int rollTotal;
+
+	// numbers
 	private int numOfSpirits;
 	private int numOfGhosts;
 	private int minCost = 0;
+	public int numOfGhostsLeft;
 
 	// tutorials
 	public GameObject Tutorial0;
@@ -78,6 +81,9 @@ public class GameController : MonoBehaviour {
 	private bool check5 = false;
 	private bool check6 = false;
 	private bool continueGame = false;
+
+	// moon
+	public GameObject moon;
 
 	// roll
 	public List<GameObject> allRolls = new List<GameObject> ();
@@ -125,13 +131,27 @@ public class GameController : MonoBehaviour {
 		Init ();
 	}
 
+	void PlaceMoon ()
+	{
+		float angle = (day-1) % 31 * Mathf.PI / 180 * 6;
+		moon.transform.position = new Vector3 (Mathf.Sin (-Mathf.PI/2 + angle) * 3, Mathf.Sin (angle) - 0.3f, 0);
+		// day ++;
+	}
+
+	void PlaceMoon (int day)
+	{
+		float angle = (day-1) % 31 * Mathf.PI / 180 * 6;
+		moon.transform.position = new Vector3 (Mathf.Sin (-Mathf.PI/2 + angle) * 3, Mathf.Sin (angle) - 0.3f, 0);
+	}
+
 	public void Init ()
 	{
 		exp = 0;
 		day = 1;
 
 		// test only
-		// day = 6;
+		// day = 18;
+		// InvokeRepeating ("PlaceMoon", 0.1f, 0.2f);
 
 		rollNum = day + 2;
 		if (rollNum > 8)
@@ -162,6 +182,8 @@ public class GameController : MonoBehaviour {
 
 	public void InitDay (int day)
 	{
+		PlaceMoon (day);
+
 		dayMeta = agentManager.GetDayMeta (day);
 
 		if (dayMeta != null)
@@ -171,9 +193,10 @@ public class GameController : MonoBehaviour {
 			SetupUI.transform.Find ("Text").GetComponent <Text> ().text = "DAY " + day;
 			todaysSpirits = dayMeta.spiritMeta;
 			todaysGhosts = dayMeta.ghostMeta;
-			todaysTree = dayMeta.treeMeta;
+			todaysTrees = dayMeta.treeMeta;
 			numOfSpirits = dayMeta.numOfSpirits;
 			numOfGhosts = dayMeta.numOfGhosts;
+			numOfGhostsLeft = numOfGhosts;
 
 			if (todaysSpirits != null && todaysSpirits.Count > 0)
 			{
@@ -230,9 +253,9 @@ public class GameController : MonoBehaviour {
 			ghosts = agentManager.CreateRoll (numOfGhosts, todaysGhosts);
 		}
 
-		if (todaysTree != null)
+		if (todaysTrees != null)
 		{
-			tree = agentManager.CreateTree (todaysTree);
+			trees = agentManager.CreateTrees (todaysTrees);
 		}
 
 		roll.Clear ();
@@ -343,9 +366,15 @@ public class GameController : MonoBehaviour {
 			}
 		}
 
-		if (tree != null)
+		if (trees != null && trees.Count > 0)
 		{
-			tree.GetComponent <Agent> ().game = this;
+			foreach (GameObject tree in trees)
+			{
+				if (tree != null)
+				{
+					tree.GetComponent <Agent> ().game = this;
+				}
+			}
 		}
 
 		if (spirits != null && spirits.Count > 0)
@@ -572,6 +601,17 @@ public class GameController : MonoBehaviour {
 
 	void Update ()
 	{
+		// keys
+		if (Input.GetKey ("1"))
+		{
+			check1 = true;
+			check2 = true;
+			check3 = true;
+			check4 = true;
+			check5 = true;
+			check6 = true;
+		}
+
 		if (state == States.INIT)
 		{
 			starttime = Time.time;

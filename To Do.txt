@@ -1,5 +1,4 @@
 To Do:
-- move the moon throughout the game to indicate day changes
 - more playtest
 
 Done:
@@ -18,10 +17,25 @@ Done:
 - fixed the UI-out-of-screen problem
 - recalculated the balance
 - added tutorials
+- moon moves throughout the sky to indicate day changes
+- playtest with Rony
+- more trees
+- recalculated balance
+- fixed bug
 
 Playtest:
+4.4 Colin:
+- I’m a little confused by the system. Are certain enemies harder to defeat than others?
+- How do you get past the upgrade selection? It seems to be stuck there so I can’t get to day 2.
+- Is there a penalty system for using too many of your characters?
+- I think it would be nice to have an intro screen that explains the game more, like with some of your previous games.
 4.5 Colin:
-1. I’m a little confused by the system. Are certain enemies harder to defeat than others?
-2. How do you get past the upgrade selection? It seems to be stuck there so I can’t get to day 2.
-3. Is there a penalty system for using too many of your characters?
-3. I think it would be nice to have an intro screen that explains the game more, like with some of your previous games.
+- Super helpful! So I found a bug. On level 3 I kept on dying and upgrading my spirits.
+    Because of that I had a bunch of really strong spirits that blew through the enemies without me needing
+    to use many of them.  However, The screen didn't recognize that I had beat all the enemies so it kept in lvl 3.
+    Even after I pressed all of the spirit cards, it stuck in lvl 3.
+- I would also say that maybe instead of having an instruction pop up every time something new happens,
+    have a one or 2 page instruction that people can click through that tells them everything they need to
+    know to get started (Like exp. is pretty standard so it might not need an explanation, but spirits and
+    enemies characteristics may be helpful). That way the flow of  gameplay isn't  interrupted with instructional
+    stops and starts.

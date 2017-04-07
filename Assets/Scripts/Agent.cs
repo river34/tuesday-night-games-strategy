@@ -184,8 +184,6 @@ public class Agent : MonoBehaviour {
 
 	public void Die ()
 	{
-		// Debug.Log (name + " : Die");
-		CheckIfEnd ();
 		Stop ();
 		animator.SetTrigger ("Die");
 		if (tag == "Tree")
@@ -201,6 +199,7 @@ public class Agent : MonoBehaviour {
 		}
 		else
 		{
+			if (tag == "Ghost") game.numOfGhostsLeft -- ;
 			gameObject.tag = "Dead";
 			NotATarget ();
 			NotAPredator ();
@@ -209,6 +208,7 @@ public class Agent : MonoBehaviour {
 			agentManager.Recycle (gameObject);
 			enabled = false;
 		}
+		CheckIfEnd ();
 	}
 
 	void NotATarget ()
@@ -245,20 +245,12 @@ public class Agent : MonoBehaviour {
 
 	public void CheckIfEnd ()
 	{
-		if (tag == "Tree")
-		{
-			game.EndDay ("Ghost");
-		}
-		GameObject[] gameObjects = GameObject.FindGameObjectsWithTag (tag);
-		if (gameObjects.Length == 0)
+		if (tag == "Ghost" && game.numOfGhostsLeft <= 0)
 		{
 			if (GameObject.Find ("Exit") != null) return;
 			GameObject exit = new GameObject ("Exit");
-			if (tag == "Ghost") exit.tag = "SpiritExit";
-			if (tag == "Spirit" || tag == "Tree") exit.tag = "GhostExit";
-			exit.transform.SetParent (transform.parent);
-			if (tag == "Ghost") exit.transform.localPosition = transform.position + Vector3.left * 2;
-			if (tag == "Spirit" || tag == "Tree") exit.transform.localPosition = transform.position + Vector3.right * 2;
+			exit.tag = "SpiritExit";
+			exit.transform.localPosition = transform.position + Vector3.left * 2;
 			exit.transform.localScale = new Vector3 (1, 5, 1);
 			exit.AddComponent <BoxCollider2D> ();
 			exit.GetComponent <BoxCollider2D> ().isTrigger = true;
@@ -372,6 +364,22 @@ public class Agent : MonoBehaviour {
 	public void ExportToMeta (ref List<AgentMeta> agentMeta, int i)
 	{
 		AgentMeta meta = agentMeta[i];
+		meta.tag = tag;
+		meta.name = name;
+		meta.damage = damage;
+		meta.damageTime = damageTime;
+		meta.num = num;
+		meta.speed = speed;
+		meta.health = health;
+		meta.defense = defense;
+		meta.level = level;
+		meta.cost = cost;
+		meta.gameObject = gameObject;
+	}
+
+	public void ExportToMeta (ref AgentMeta agentMeta)
+	{
+		AgentMeta meta = agentMeta;
 		meta.tag = tag;
 		meta.name = name;
 		meta.damage = damage;
