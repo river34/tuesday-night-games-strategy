@@ -199,7 +199,8 @@ public class Agent : MonoBehaviour {
 		}
 		else
 		{
-			if (tag == "Ghost") game.numOfGhostsLeft -- ;
+			if (gameObject.tag == "Ghost") game.numOfGhostsLeft -- ;
+			if (gameObject.tag == "Spirit") game.numOfSpiritsLeft -- ;
 			gameObject.tag = "Dead";
 			NotATarget ();
 			NotAPredator ();

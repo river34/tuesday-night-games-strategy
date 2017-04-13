@@ -14,6 +14,9 @@ public class Roll : MonoBehaviour {
 		agentObject.GetComponent <Agent> ().game = game;
 		agentObject.GetComponent <Agent> ().Move ();
 		enabled = false;
+
+		// sound
+		game.soundManager.RandomizeEffect (game.clickSounds);
 	}
 
 	void OnDisable ()

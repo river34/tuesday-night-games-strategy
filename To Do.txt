@@ -13,15 +13,21 @@ Done:
 - added the Upgrade UI - use EXP to upgrade
 - added more agents
 - added the growth of tree - build a sense of connection
-- finished the first playtest with Colin
+- finished the first playtest with Colin (4.4)
 - fixed the UI-out-of-screen problem
 - recalculated the balance
 - added tutorials
 - moon moves throughout the sky to indicate day changes
-- playtest with Rony
+- playtest with Rony (4.6)
+- playtest with Emre (4.6)
 - more trees
 - recalculated balance
-- fixed bug
+- fixed bugs
+- added sound track (Colin)
+- playtest with Xuesong (4.9)
+- added a progress bar
+- updated pictures
+- fixed bugs
 
 Playtest:
 4.4 Colin:
@@ -39,3 +45,16 @@ Playtest:
     know to get started (Like exp. is pretty standard so it might not need an explanation, but spirits and
     enemies characteristics may be helpful). That way the flow of  gameplay isn't  interrupted with instructional
     stops and starts.
+4.6 Rony:
+- I did feel stress and i love the design
+- I wasn't sure exactly how to strategies
+- I think i started strategising when i got the faster minions
+4.6 Emre:
+- Stone was fasted than the bushes (bug)
+- I thought I could just press the defenses as they come and win until Day 4, it got much harder by then
+- Then I had to wait a little, spawn the slow ones first and then the faster ones so that by the time they encountered
+    the winter spirits there were multiple of them in the same spot
+- One thing is that there is no indication of how you are doing as you are playing - like how many more winter spirits
+    are coming or how many defenses you have remaining
+4.9 Xuesong:
+- It gave great aesthetic pleasure

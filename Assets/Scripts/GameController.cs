@@ -56,14 +56,18 @@ public class GameController : MonoBehaviour {
 	public GameObject SetupUI;
 	public GameObject RollUI;
 	public GameObject ExpUI;
+	public GameObject ProgressUI;
+	private GameObject GhostBar;
+	private GameObject SpiritBar;
 	private int rollNum;
 	private int rollTotal;
 
 	// numbers
-	private int numOfSpirits;
-	private int numOfGhosts;
+	public int numOfSpirits;
+	public int numOfGhosts;
 	private int minCost = 0;
 	public int numOfGhostsLeft;
+	public int numOfSpiritsLeft;
 
 	// tutorials
 	public GameObject Tutorial0;
@@ -97,6 +101,10 @@ public class GameController : MonoBehaviour {
 	public bool rollLocked;
 	public bool expLocked;
 
+	// sound
+	public SoundManager soundManager;
+	public AudioClip[] clickSounds;
+
 	void Awake ()
 	{
 		if (instance == null)
@@ -127,6 +135,14 @@ public class GameController : MonoBehaviour {
 				upgradeBook.Add (upgrade.name, upgrade);
 			}
 		}
+
+		soundManager = GetComponent <SoundManager> ();
+
+		GhostBar = ProgressUI.transform.Find ("GhostBar").gameObject;
+		SpiritBar = ProgressUI.transform.Find ("SpiritBar").gameObject;
+
+		// resolution
+		Screen.SetResolution (960, 540, true);
 
 		Init ();
 	}
@@ -182,6 +198,8 @@ public class GameController : MonoBehaviour {
 
 	public void InitDay (int day)
 	{
+		DeleteExit ();
+
 		PlaceMoon (day);
 
 		dayMeta = agentManager.GetDayMeta (day);
@@ -196,6 +214,7 @@ public class GameController : MonoBehaviour {
 			todaysTrees = dayMeta.treeMeta;
 			numOfSpirits = dayMeta.numOfSpirits;
 			numOfGhosts = dayMeta.numOfGhosts;
+			numOfSpiritsLeft = numOfSpirits;
 			numOfGhostsLeft = numOfGhosts;
 
 			if (todaysSpirits != null && todaysSpirits.Count > 0)
@@ -278,6 +297,9 @@ public class GameController : MonoBehaviour {
 
 		SetupUI.SetActive (false);
 
+		// start music
+		soundManager.StartBackground ();
+
 		time = Time.time;
 		lastSpiritSpawnTime = -1;
 		lastGhostSpawnTime = -1;
@@ -308,6 +330,9 @@ public class GameController : MonoBehaviour {
 
 	public void EndDay (string tag)
 	{
+		// stop music
+		soundManager.StopBackground ();
+
 		// delete all agents
 		Destroy (GameObject.Find ("Agents"));
 
@@ -352,6 +377,16 @@ public class GameController : MonoBehaviour {
 
 	void Day ()
 	{
+		if (numOfGhostsLeft > 0 && numOfGhosts > 0)
+		{
+			GhostBar.GetComponent <RectTransform> ().sizeDelta = new Vector2 ((float)numOfGhostsLeft/(float)numOfGhosts * 960, GhostBar.GetComponent <RectTransform> ().sizeDelta.y);
+		}
+
+		if (numOfSpiritsLeft > 0 && numOfSpirits > 0)
+		{
+			SpiritBar.GetComponent <RectTransform> ().sizeDelta = new Vector2 ((float)numOfSpiritsLeft/(float)numOfSpirits * 960, SpiritBar.GetComponent <RectTransform> ().sizeDelta.y);
+		}
+
 		if (ghosts != null && ghosts.Count > 0)
 		{
 			if (lastGhostSpawnTime == -1 || Time.time - lastGhostSpawnTime >= ghostSpawnInterval)
@@ -429,13 +464,13 @@ public class GameController : MonoBehaviour {
 					return;
 				}
 				Vector3 position = rollObject.GetComponent <RectTransform> ().localPosition;
-				if (position.x > - 80 * rollNum/2 + 40 + 80 * index)
+				if (position.x > - 80 * (float) rollNum/2 + 40 + 80 * index)
 				{
 					rollObject.GetComponent <RectTransform> ().localPosition += 100 * Vector3.left * Time.deltaTime;
 				}
 				else
 				{
-					rollObject.GetComponent <RectTransform> ().localPosition = new Vector3 (- 80 * rollNum/2 + 40 + 80 * index, position.y, position.z);
+					rollObject.GetComponent <RectTransform> ().localPosition = new Vector3 (- 80 * (float) rollNum/2 + 40 + 80 * index, position.y, position.z);
 				}
 				index ++;
 			}
@@ -654,6 +689,11 @@ public class GameController : MonoBehaviour {
 			{
 				Upgrade ();
 			}
+
+			if (Input.GetKey ("space"))
+			{
+				next_state = States.SETUP;
+			}
 		}
 
 		else if (state == States.SETUP)
@@ -677,7 +717,7 @@ public class GameController : MonoBehaviour {
 				Tutorial0.SetActive (true);
 			}
 
-			if (continueGame)
+			if (continueGame || Input.GetKey ("space"))
 			{
 				ContinueGame ();
 				Tutorial0.SetActive (false);
@@ -694,7 +734,7 @@ public class GameController : MonoBehaviour {
 				Tutorial1.SetActive (true);
 			}
 
-			if (continueGame)
+			if (continueGame || Input.GetKey ("space"))
 			{
 				ContinueGame ();
 				Tutorial1.SetActive (false);
@@ -711,7 +751,7 @@ public class GameController : MonoBehaviour {
 				Tutorial2.SetActive (true);
 			}
 
-			if (continueGame)
+			if (continueGame || Input.GetKey ("space"))
 			{
 				ContinueGame ();
 				Tutorial2.SetActive (false);
@@ -727,7 +767,7 @@ public class GameController : MonoBehaviour {
 				Tutorial3.SetActive (true);
 			}
 
-			if (continueGame)
+			if (continueGame || Input.GetKey ("space"))
 			{
 				ContinueGame ();
 				Tutorial3.SetActive (false);
@@ -743,7 +783,7 @@ public class GameController : MonoBehaviour {
 				Tutorial4.SetActive (true);
 			}
 
-			if (continueGame)
+			if (continueGame || Input.GetKey ("space"))
 			{
 				ContinueGame ();
 				Tutorial4.SetActive (false);
@@ -759,7 +799,7 @@ public class GameController : MonoBehaviour {
 				Tutorial5.SetActive (true);
 			}
 
-			if (continueGame)
+			if (continueGame || Input.GetKey ("space"))
 			{
 				ContinueGame ();
 				Tutorial5.SetActive (false);
@@ -775,7 +815,7 @@ public class GameController : MonoBehaviour {
 				Tutorial6.SetActive (true);
 			}
 
-			if (continueGame)
+			if (continueGame || Input.GetKey ("space"))
 			{
 				ContinueGame ();
 				Tutorial6.SetActive (false);
@@ -791,7 +831,7 @@ public class GameController : MonoBehaviour {
 				Tutorial7.SetActive (true);
 			}
 
-			if (continueGame)
+			if (continueGame || Input.GetKey ("space"))
 			{
 				ContinueGame ();
 				Tutorial7.SetActive (false);
@@ -825,6 +865,7 @@ public class GameController : MonoBehaviour {
 
 	private void ContinueGame ()
     {
+		if (!continueGame) continueGame = true;
         Time.timeScale = 1;
     }
 
@@ -848,6 +889,15 @@ public class GameController : MonoBehaviour {
 		else if (id == 2)
 		{
 			next_state = States.DAY_TUT2;
+		}
+	}
+
+	void DeleteExit ()
+	{
+		GameObject exit= GameObject.Find ("Exit");
+		if (exit != null)
+		{
+			Destroy (exit);
 		}
 	}
 }
